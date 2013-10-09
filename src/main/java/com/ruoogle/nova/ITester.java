@@ -17,11 +17,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @since 2013年9月28日 下午5:33:45
  */
 public class ITester {
-	//就是测试一下能否提交
+
 	public static void main(String[] args) throws Exception {
-		ApplicationContext context = new ClassPathXmlApplicationContext("/schedule/job/jobLauncher.xml");
+		ApplicationContext context = new ClassPathXmlApplicationContext("/schedule/job/*.xml");
 		JobLauncher jobLauncher = context.getBean("jobLauncher", JobLauncher.class);
-		Job job = context.getBean("job", Job.class);
+		Job job = context.getBean("marketLevelJob", Job.class);
 		System.out.println(job);
 		try {
 			JobExecution result = jobLauncher.run(job, 

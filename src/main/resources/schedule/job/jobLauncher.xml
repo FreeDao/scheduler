@@ -26,14 +26,6 @@
 	http://www.springframework.org/schema/batch 
 	http://www.springframework.org/schema/batch/spring-batch-2.2.xsd">
 	
-	<bean:import resource="classpath:schedule/job/job.xml"/>
-	
-	<bean:bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<bean:property name="location">
-			<bean:value>classpath:schedule/job/application.properties</bean:value>
-		</bean:property>
-	</bean:bean>
-	
 	<bean:bean id="dataSource" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
 		<bean:property name="driverClass" value="${jdbc.driverClassName}" />
 		<bean:property name="jdbcUrl" value="${jdbc.url}" />
@@ -48,6 +40,8 @@
 	<job-repository id="jobRepository" table-prefix="BATCH_"
 		max-varchar-length="3000" isolation-level-for-create="SERIALIZABLE"
 		data-source="dataSource" transaction-manager="transactionManager" />
+	
+	<bean:bean id="alwaysSkipItemSkipPolicy" class="org.springframework.batch.core.step.skip.AlwaysSkipItemSkipPolicy" />
 
 	<task:executor id="jobExecutor" pool-size="20"
 		keep-alive="3600" queue-capacity="10" rejection-policy="CALLER_RUNS"/>
@@ -63,23 +57,13 @@
 		<jdbc:script encoding="UTF-8" execution="INIT"
 			location="classpath:/org/springframework/batch/core/schema-mysql.sql" />
 	</jdbc:initialize-database>
-
-	<!-- 
 	
-	<bean:bean id="simpleAsyncTaskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor" />
-	
-	<job-repository id="jobRepository" 
-		data-source="dataSource" 
-		transaction-manager="transactionManager" 
-		isolation-level-for-create="READ_COMMITTED" 
-		max-varchar-length="3000"/>
-	
-	<bean:bean id="jobRepository" class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean">
-		<bean:property name="dataSource" ref="dataSource" />
-		<bean:property name="transactionManager" ref="transactionManager" />
-		<bean:property name="tablePrefix" value="RUOOGLE_" />
+	<bean:bean id="namedJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		<bean:constructor-arg index="0" ref="dataSource"/>
 	</bean:bean>
 	
-	 -->
-
+	<bean:bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<bean:constructor-arg index="0" ref="dataSource"/>
+	</bean:bean>
+	
 </bean:beans>

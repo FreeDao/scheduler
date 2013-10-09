@@ -28,7 +28,7 @@
         <level value="DEBUG"/>
         <appender-ref ref="SchedulerAppender"/>
     </logger>
-    <logger name="com.ruoogle" additivity="false">
+    <logger name="com.ruoogle.nova" additivity="false">
 		<level value="DEBUG" />
 		<appender-ref ref="SchedulerAppender" />
 	</logger>

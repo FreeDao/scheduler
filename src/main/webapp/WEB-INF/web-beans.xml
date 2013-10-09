@@ -31,8 +31,6 @@
 		"
 	default-lazy-init="false">
 	
-	<import resource="classpath:schedule/job/schedule.xml"/>
-	
 	<aop:aspectj-autoproxy proxy-target-class="true" />
 	
 	<context:annotation-config />
@@ -65,24 +63,4 @@
 		<property name="cache" value="true"/>
 		<property name="cacheUnresolved" value="true"/>
 	</bean>
-	
-	<mvc:resources location="/WEB-INF/assets/images/" mapping="/images/**" cache-period="31556926"/>
-	<mvc:resources location="/WEB-INF/assets/js/" mapping="/js/**" cache-period="31556926"/>
-	<mvc:resources location="/WEB-INF/assets/css/" mapping="/css/**" cache-period="31556926"/>
-	
-	<bean id="commonsMultipartResolver" class="com.ruoogle.nova.common.ProgressCommonsMultipartResolver">
-		<!-- 100M -->
-		<property name="maxUploadSize" value="104857600" />
-	</bean>
-	
-	<!--
-	2.5.6 uesd
-	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
-	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
-	-->
-	<!--
-	3.0 uesd
-	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
-	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
-	-->
 </beans>

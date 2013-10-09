@@ -2,14 +2,13 @@ package com.ruoogle.nova.schedule;
 
 import java.util.HashMap;
 
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.PersistJobDataAfterExecution;
 import org.quartz.SchedulerException;
+import org.quartz.StatefulJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyAccessorFactory;
@@ -21,9 +20,7 @@ import org.springframework.beans.PropertyAccessorFactory;
  * @version 1.0
  * @since 2013年9月28日 下午4:58:13
  */
-@PersistJobDataAfterExecution
-@DisallowConcurrentExecution
-public abstract class QuartzStatefulJobBean implements Job {
+public abstract class QuartzStatefulJobBean implements StatefulJob {
 
 	private HashMap<String, String> enviroment;
 
@@ -32,6 +29,8 @@ public abstract class QuartzStatefulJobBean implements Job {
 	private final static String PRODUCT_ENV_VALUE = "prd";
 
 	protected static final Logger log = LoggerFactory.getLogger("Scheduler");
+	
+	protected JobLauncher jobLauncher;
 
 	/**
 	 * This implementation applies the passed-in job data map as bean property
@@ -59,8 +58,13 @@ public abstract class QuartzStatefulJobBean implements Job {
 				return;
 			}
 		}
+		
 		log.error("job start:" + getClass().getName());
-		executeInternal(context);
+		try {
+			executeInternal(context);
+		} catch (Exception e) {
+			log.error("job run error.:" + getClass().getName(), e);
+		}
 		log.error("job end:" + getClass().getName());
 	}
 
@@ -79,5 +83,12 @@ public abstract class QuartzStatefulJobBean implements Job {
 	 */
 	public void setEnviroment(HashMap<String, String> enviroment) {
 		this.enviroment = enviroment;
+	}
+	
+	/**
+	 * @param jobLauncher the jobLauncher to set
+	 */
+	public void setJobLauncher(JobLauncher jobLauncher) {
+		this.jobLauncher = jobLauncher;
 	}
 }
