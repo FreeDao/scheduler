@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:tool="http://www.springframework.org/schema/tool"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-3.0.xsd  
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd  
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-2.5.xsd
+	http://www.springframework.org/schema/task 
+	http://www.springframework.org/schema/task/spring-task-3.2.xsd 
+	http://www.springframework.org/schema/jdbc 
+	http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+	http://www.springframework.org/schema/tool
+	http://www.springframework.org/schema/tool/spring-tool-3.2.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-3.2.xsd
+	http://www.springframework.org/schema/batch 
+	http://www.springframework.org/schema/batch/spring-batch-2.2.xsd">
+	
+	<util:map id="enviroment" 
+		key-type="java.lang.String" 
+		value-type="java.lang.Long" 
+		map-class="java.util.HashMap">
+		<bean:entry key="env" value="${server.enviroment}"/>
+	</util:map>
+	
+	<bean id="jobDetail_0" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass" value="com.taobao.cucrm.timer.job.ReportDataJob"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="enviroment">
+                    <ref bean="enviroment"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+ 	<bean id="jobDetail_1" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="timeTaskManager"/>
+		<property name="targetMethod" value="doUpdateItemStatus2StartAm"/>		
+	</bean>
+	
+	<bean id="doUpdateItemStatus2StartAmTaskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="jobDetail_0"/>
+	     <property name="cronExpression" value="0 0 9 * * ?"/>
+	</bean>
+	
+	<bean id="doUpdateItemStatus2StartAmTaskScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" autowire="no">
+		<property name="triggers">
+			<list>
+				<ref bean="doUpdateItemStatus2StartAmTaskTrigger"/>
+			</list>
+		</property>
+		<property name="autoStartup" value="true"/>
+		<property name="schedulerName" value="doUpdateItemStatus2StartAmTaskTrigger"/>
+	</bean>
+	
+	<import resource="classpath:schedule/job/jobLauncher.xml"/>
+</beans>
