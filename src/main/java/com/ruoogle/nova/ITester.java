@@ -17,7 +17,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @since 2013年9月28日 下午5:33:45
  */
 public class ITester {
-
+	//就是测试一下能否提交
 	public static void main(String[] args) throws Exception {
 		ApplicationContext context = new ClassPathXmlApplicationContext("/schedule/job/jobLauncher.xml");
 		JobLauncher jobLauncher = context.getBean("jobLauncher", JobLauncher.class);
