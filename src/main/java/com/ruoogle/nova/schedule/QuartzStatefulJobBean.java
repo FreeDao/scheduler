@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.ConfigurablePropertyAccessor;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyAccessorFactory;
 
@@ -31,7 +32,27 @@ public abstract class QuartzStatefulJobBean implements StatefulJob {
 	protected static final Logger log = LoggerFactory.getLogger("Scheduler");
 	
 	protected JobLauncher jobLauncher;
+	
+	public static class A {
+		private int id;
 
+		public A(int id) {
+			super();
+			this.id = id;
+		}
+	}
+
+	public static void main(String[] args) {
+		A a = new A(3);
+//		BeanWrapper bw = PropertyAccessorFactory.forBeanPropertyAccess(a);
+		
+		ConfigurablePropertyAccessor accessor = PropertyAccessorFactory.forDirectFieldAccess(a);
+		
+		System.out.println(accessor.getPropertyValue("id"));
+		accessor.setPropertyValue("id", 15);
+		System.out.println(accessor.getPropertyValue("id"));
+	}
+	
 	/**
 	 * This implementation applies the passed-in job data map as bean property
 	 * values, and delegates to <code>executeInternal</code> afterwards.
