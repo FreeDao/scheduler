@@ -28,16 +28,30 @@ public class MarketLevelSchedule extends QuartzStatefulJobBean {
 	@Override
 	protected void executeInternal(JobExecutionContext context)
 			throws JobExecutionException {
+		log.error("MarketLevelSchedule>> start...");
 		try {
-			log.error("MarketLevelSchedule>> start...");
 			JobExecution result = jobLauncher.run(marketLevelJob, 
 					new JobParametersBuilder()
 					.addParameter("time", new JobParameter(new Date()))
 					.addParameter("dates", new JobParameter(14L))
+					.addParameter("old_level", new JobParameter(1L))
+					.addParameter("new_level", new JobParameter(2L))
 					.toJobParameters());
-			log.error("MarketLevelSchedule>>" + result);
+			log.error("MarketLevelSchedule >> level 1 >> 2" + result);
 		} catch (Exception e) {
-			log.error("MarketLevelSchedule execute error.", e);
+			log.error("MarketLevelSchedule >> level 1 >> 2 execute error.", e);
+		}
+		try {
+			JobExecution result = jobLauncher.run(marketLevelJob, 
+					new JobParametersBuilder()
+					.addParameter("time", new JobParameter(new Date()))
+					.addParameter("dates", new JobParameter(7L))
+					.addParameter("old_level", new JobParameter(2L))
+					.addParameter("new_level", new JobParameter(3L))
+					.toJobParameters());
+			log.error("MarketLevelSchedule >> level 2 >> 3" + result);
+		} catch (Exception e) {
+			log.error("MarketLevelSchedule >> level 2 >> 3 execute error.", e);
 		}
 		log.error("MarketLevelSchedule>> end...");
 		

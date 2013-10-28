@@ -55,7 +55,7 @@
 		<bean:property name="rowMapper">
 			<bean:bean class="org.springframework.jdbc.core.ColumnMapRowMapper"></bean:bean>
 		</bean:property>
-		<bean:property name="queryProvider" ref="marketLevelPagingQueryProvider" />
+		<bean:property name="queryProvider" ref="marketLevelPagingQueryProvider"/>
 		<bean:property name="parameterValues" ref="marketLevelParameterValues"/>
 	</bean:bean>
 	
@@ -64,20 +64,22 @@
 		value-type="java.lang.Long" 
 		map-class="java.util.HashMap">
 		<bean:entry key="dates" value="#{jobParameters['dates']}"/>
+		<bean:entry key="old_level" value="#{jobParameters['old_level']}"/>
+		<bean:entry key="new_level" value="#{jobParameters['new_level']}"/>
 	</util:map>
 
 	<bean:bean id="marketLevelPagingQueryProvider" class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
 		<bean:property name="dataSource" ref="dataSource" />
 		<bean:property name="databaseType" value="MySQL" />
 		<bean:property name="fromClause" value="nova_extend_marketing" />
-		<bean:property name="whereClause" value="datediff(now(), createdAt) &gt; :dates and level = 1" />
+		<bean:property name="whereClause" value="datediff(now(), createdAt) &gt; :dates and level = :old_level" />
 		<bean:property name="selectClause" value="id, userSign, userFrom, userPwd, remarks, createdAt, novaUserId, pricePreRound, gender, lastCheckedTime, level" />
 		<bean:property name="sortKey" value="createdAt"/>
 	</bean:bean>
 
 	<bean:bean id="marketLevelWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
 		<bean:property name="dataSource" ref="dataSource" />
-		<bean:property name="sql" value="update nova_extend_marketing set level = 2 where id = :id" />
+		<bean:property name="sql" value="update nova_extend_marketing set level = :new_level where id = :id" />
 		<bean:property name="itemSqlParameterSourceProvider">
 			<bean:bean class="com.ruoogle.nova.job.data.MapItemSqlParameterSourceProvider" />
 		</bean:property>
